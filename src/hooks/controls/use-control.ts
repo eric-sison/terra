@@ -4,7 +4,7 @@ import Control from 'ol/control/Control';
 
 export const useControl = <T extends Control>(control: T) => {
   // get current map instance
-  const map = useMap();
+  const { map } = useMap();
 
   useEffect(() => {
     // do nothing if current map instance is null

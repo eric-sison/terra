@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 export const useInteraction = <T extends Interaction>(interaction: T) => {
   // get current map instance
-  const map = useMap();
+  const { map } = useMap();
 
   useEffect(() => {
     // do nothing if current map instance is null

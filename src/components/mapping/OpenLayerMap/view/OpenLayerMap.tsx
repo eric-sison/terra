@@ -1,13 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { FunctionComponent, MutableRefObject, useEffect, useRef } from 'react';
 import { useMapStore } from '@terra/global/map-store';
 import { Map } from 'ol';
-import { MapContainerProps } from '../types/map-container-types';
 import View from 'ol/View';
+import { OpenLayerMapProps } from '../types/open-layer-map-types';
 
-export const MapContainer: FunctionComponent<MapContainerProps> = ({
+export const OpenLayerMap: FunctionComponent<OpenLayerMapProps> = ({
   children,
   keyboardEventTarget,
   maxTilesLoading,
@@ -19,11 +18,14 @@ export const MapContainer: FunctionComponent<MapContainerProps> = ({
   ...viewOptions
 }) => {
   // access setMap and removeMap from global store
-  const { setMap, setMapRef, removeMap } = useMapStore((state) => state);
+  const { map, setMap, setMapRef, removeMap } = useMapStore((state) => state);
 
   // initial mapRef that will hold the current map instance
   const mapRef = useRef() as unknown as MutableRefObject<HTMLDivElement>;
 
+  /**
+   *  Initialize map instance on first load
+   */
   useEffect(() => {
     // intialize map instance
     const map = new Map({
@@ -41,6 +43,7 @@ export const MapContainer: FunctionComponent<MapContainerProps> = ({
     // set current map instance in the global store
     setMap(map);
 
+    // set map ref in the global store
     setMapRef(mapRef);
 
     // as soon as this component is loaded, set the focus to the current map
@@ -59,16 +62,35 @@ export const MapContainer: FunctionComponent<MapContainerProps> = ({
     };
 
     // load this only once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
-   *  - Set mapRef to be equal to this parent div's ref to target the map's container.
-   *  - Make sure that map's height and width takes its parent's full height and width to be able to render tha map.
-   *  - Make sure to specify map container's tabIndex to make sure it's focusable.
-   *  - This is important to some map interactions that require map focus, such as KeyboardPan, KeyboardZoom, etc.
+   *  Make sure that everytime a user hovers over the map,
+   *  this component will regain focus - so that the map remains interactible.
+   *
+   *  This is usefull when a user interacts with UI elements outside the map container
+   *  that takes focus out of the map.
    */
+  useEffect(() => {
+    // if current map instance is null
+    if (!map) return;
+
+    // listen on pointer move event to set focus on the map
+    map.on('pointermove', () => mapRef.current.focus());
+
+    return () => {
+      // set map target to undefined
+      map.setTarget(undefined);
+
+      // invoke removeMap function from the store
+      removeMap();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map]);
+
   return (
-    <div ref={mapRef} tabIndex={0} id="map" className="relative h-full w-full">
+    <div ref={mapRef} tabIndex={0} id="map" className="relative h-full w-full outline-none">
       {children}
     </div>
   );

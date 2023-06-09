@@ -1,17 +1,17 @@
 'use client';
 
-import { FunctionComponent, useEffect, useMemo } from 'react';
-import { MapContainer } from '@terra/components/MapContainer/view/MapContainer';
+import { FunctionComponent, useMemo } from 'react';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { useMap } from '@terra/hooks';
 import Group from 'ol/layer/Group';
 import BingMaps from 'ol/source/BingMaps';
-import { MapSwitcher } from '@terra/components/MapSwitcher/view/MapSwitcher';
+import { OpenLayerMap } from '../../OpenLayerMap';
+import { useMap } from '@terra/hooks';
 
 export const TerraMap: FunctionComponent = () => {
+  const { map } = useMap();
   const vectorDrawSrc = useMemo(() => new VectorSource({ wrapX: false }), []);
   const layerTileSrc = useMemo(() => new OSM(), []);
   const layer = useMemo(() => new TileLayer({ source: layerTileSrc }), [layerTileSrc]);
@@ -43,15 +43,13 @@ export const TerraMap: FunctionComponent = () => {
   ];
 
   return (
-    <MapContainer
+    <OpenLayerMap
       center={[125.1726, 6.1135]}
       zoom={16}
       maxZoom={19}
       minZoom={4}
       projection={'EPSG:4326'}
       layers={newLayers}
-    >
-      <MapSwitcher />
-    </MapContainer>
+    ></OpenLayerMap>
   );
 };

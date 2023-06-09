@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 
 export const useAddLayers = (layer: Array<TileLayer<TileSource> | VectorLayer<VectorSource>>) => {
   // get the current map instance
-  const map = useMap();
+  const { map } = useMap();
 
   useEffect(() => {
     // do nothing if map instance is null

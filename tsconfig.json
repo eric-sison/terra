@@ -23,6 +23,12 @@
       "@terra/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/components/svgs/heroicons/outline/OutlineMap"
+  ],
   "exclude": ["node_modules"]
 }
